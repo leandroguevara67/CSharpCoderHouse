@@ -1,0 +1,44 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EntregableClase6
+{
+    public class Usuario
+    {
+        private int Id;
+        private String Nombre;
+        private String Apellido;
+        private String NombreUsuario;
+        private String Contraseña;
+        private String Mail;
+
+    }
+    public abstract class Producto
+    {
+        private int Id;
+        private string Descripcion;
+        private float Costo;
+        private float PrecioVenta;
+        private int Stock;
+        private int IdUsuario;
+    }
+    public class ProductoVendido
+    {
+        private int Id;
+        private string IdProducto;
+        private int Stock;
+        private int IdVenta;
+
+    }
+    public class Venta
+    {
+        private int Id;
+        private string Comentarios;
+
+    } 
+
+
+}
