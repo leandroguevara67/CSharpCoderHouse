@@ -25,5 +25,13 @@ namespace SistemaVentaCoder.Controllers
                 return Problem(ex.Message);
             }
         }
+        private List<Venta> GetVenta()
+        {
+         throw new NotImplementedException();
+        [HttpPost]
+        public ActionResult Post([FromBody] Venta venta)
+        {
+         try
+        }
     }
 }
