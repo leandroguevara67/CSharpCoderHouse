@@ -1,37 +1,87 @@
-using Microsoft.AspNetCore.Mvc;
-using SistemaVentaCoder.ADO.NET;
 using SistemaVentaCoder.Models;
+using System.Data;
 using System.Data.SqlClient;
 
-namespace SistemaVentaCoder.Controllers
+namespace SistemaVentaCoder.ADO.NET
 {
-    [ApiController]
-    [Route("Api/[controller]")]
-    public class VentaController : ControllerBase
+    public class VentaHandler
     {
-        private VentaHandler handler = new VentaHandler();
+        private SqlConnection conexion;
+        private string CadenaConexion = "Server=sql.bsite.net\\MSSQL2016;" +
+            "Database=LeandroEmanuel_SistemaVentaCoder;" +
+            "User Id=LeandroEmanuel_SistemaVentaCoder;" +
+            "Password=puyuta67;";
 
-        [HttpGet]
-        public ActionResult<List<Venta>> Get()
+        public VentaHandler() 
         {
             try
             {
-                List<Venta> lista = handler.GetVenta();
-                return Ok(lista);
+                conexion = new SqlConnection(CadenaConexion);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                return Problem(ex.Message);
+                throw;
             }
         }
-        private List<Venta> GetVenta()
+
+        public List<Venta> GetVenta()
         {
-         throw new NotImplementedException();
-        [HttpPost]
-        public ActionResult Post([FromBody] Venta venta)
-        {
-         try
+            List<Venta> listaVentas = new List<Venta>();
+            if (CadenaConexion == null)
+            {
+                throw new Exception("Conexion no realizada");
+            }
+            try
+            {
+                using (SqlCommand command = new SqlCommand("select * from Venta", conexion))
+                {
+                    conexion.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                Venta venta = new Venta();
+                                venta.Id = Convert.ToInt32(reader["Id"].ToString());
+                                venta.Comentarios = reader["Comentarios"].ToString();
+                                venta.IdUsuario = Convert.ToInt32(reader["IdUsuario"].ToString());
+                                listaVentas.Add(venta);
+                            }
+                        }
+                    }
+                }
+                conexion.Close();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return listaVentas;
+
+            public void addVenta(Venta venta)
+            {
+                if (conexion == null)
+                {
+                    throw new Exception("Conexion no establecida")
+                }
+                try
+                {
+                    using (SqlCommand cmd = new SqlCommand("INSERT INTO Venta(Comentario,IdUsuario)VALUES(@comentario,idUsuario))", conexion))
+                    {
+                        conexion.Open();
+                        cmd.Parameters.Add(new SqlParameter("comentario", SqlDbType.Varchar) { Value = venta.Comentarios });
+                        cmd.Parameters.Add(new SqlParameter("idUsuario", SqlDbType.BigInt) { Value = venta.IdUsuario });
+                        conexion.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
         }
     }
 }
